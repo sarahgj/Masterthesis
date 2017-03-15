@@ -9,9 +9,9 @@ clc
 %run = 5;
 
 %Choose halocarbon
-%type = 'methyliodide';
+type = 'methyliodide';
 %type = 'dibromomethane';
-type = 'bromoform';
+%type = 'bromoform';
 
 %Setting end date
 if strcmp(type, 'methyliodide')
@@ -219,7 +219,7 @@ for i = 1:len
         if strcmp(type, 'methyliodide')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/ASTRA/Methyliodide/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Methyliodide_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './ASTRA/Methyliodide_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Methyliodide_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 
@@ -229,7 +229,7 @@ for i = 1:len
         elseif strcmp(type, 'dibromomethane')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/ASTRA/Dibromomethane/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Dibromomethane_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './ASTRA/Dibromomethane_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Dibromomethane_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 
@@ -238,7 +238,7 @@ for i = 1:len
         elseif strcmp(type, 'bromoform')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/ASTRA/Bromoform/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Bromoform_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './ASTRA/Bromoform_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/ASTRA/Bromoform_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 

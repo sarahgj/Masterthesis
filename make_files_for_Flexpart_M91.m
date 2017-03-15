@@ -219,7 +219,7 @@ for i = 1:len
         if strcmp(type, 'methyliodide')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/M91/Methyliodide/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Methyliodide_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './M91/Methyliodide_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Methyliodide_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 
@@ -229,7 +229,7 @@ for i = 1:len
         elseif strcmp(type, 'dibromomethane')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/M91/Dibromomethane/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Dibromomethane_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './M91/Dibromomethane_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Dibromomethane_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 
@@ -238,7 +238,7 @@ for i = 1:len
         elseif strcmp(type, 'bromoform')
             fid_1 = fopen(['/uio/hume/student-u17/sarahgj/Master/Data/Flexpart_files/M91/Bromoform/pathnames-' istr], 'wt');
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Bromoform_%s/options/options-%i/\n', simulation, j);        
-            fprintf(fid_1, './M91/Bromoform_%s/outputs-%i/\n', simulation, j);        
+            fprintf(fid_1, './outputs-%i/\n', j);        
             fprintf(fid_1, '\n');        
             fprintf(fid_1, '/usit/abel/u1/sarahgj/Flexpart/Runs/M91/Bromoform_%s/AVAILABLE\n', simulation);        
             fprintf(fid_1, '============================================\n'); 
