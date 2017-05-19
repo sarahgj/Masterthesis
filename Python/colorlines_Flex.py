@@ -12,6 +12,7 @@
 # >> module use --append /projects/NS1000K/modulefiles
 # >> module load python/anaconda
 
+import latex_plots as lp # Must be on top!
 import os
 import calendar
 import shutil
@@ -28,7 +29,7 @@ import pylab as pl
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.collections import LineCollection
 import fnmatch
-
+import specify as sp
 
 
 def main():
@@ -57,10 +58,11 @@ def main():
 
 	def make_map(title):
 		##Sets up a nice map for the figure, and adds a title.##
-		fig = plt.figure(1,figsize=(20,15))
+		#fig = plt.figure(1,figsize=(20,15))
+		fig, ax  = lp.newfig(1)
 		m = Basemap(projection='lcc',resolution='l',width=10000000,height=8000000,lon_0=-78.75,lat_0=-11.,urcrnrlat=2.) 	      
-		m.drawparallels(np.arange(int(-50.),int(50.),15),labels=[1,0,0,0], linewidth=0.0, size = 18)
-		m.drawmeridians(np.arange(int(-120.),int(0.),15),labels=[0,0,0,1], linewidth=0.0, size = 18)
+		m.drawparallels(np.arange(int(-50.),int(50.),15),labels=[1,0,0,0], linewidth=0.0)
+		m.drawmeridians(np.arange(int(-120.),int(0.),15),labels=[0,0,0,1], linewidth=0.0)
 		#m = Basemap(projection='lcc',resolution='l',width=30000000,height=15000000,lon_0=-78.75,lat_0=-11.,urcrnrlat=2.) 
 		#The whole world:
 		#m = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,projection='mill')
@@ -73,7 +75,7 @@ def main():
 		#m.drawrivers(linewidth=0.2, linestyle='solid', color='b', antialiased=1, ax=None, zorder=None)
 		#m.drawgreatcircle(lon1=0, lat1=0, lon2=-150, lat2=0, del_s=100.0, linewidth=1.5, color='r')
 		m.drawmapboundary(fill_color='white')
-		plt.title(title, size = 22)
+		plt.title(title)
 		return m, fig
 
 	#=============================================================================================================#
@@ -114,87 +116,69 @@ def main():
 	
 
 	#Import options in parameters
-	print """usage: python %prog ASTRA/M91 M(Methyliodide)/B(Bromoform)/D(Dibromomethane) number of every # trajectory/TTP  h(height)/m(mass)"""
+	substance, period, cruise, name, N_releases = sp.specify()
+	print """number of every # trajectory/TTP  h(height)/m(mass) test:y/n"""
 	import sys
-	cruice = sys.argv[1]
-	variable = sys.argv[2]
-	substance = sys.argv[3]
-	if substance == "M":
-		substance = "Methyliodide"
-		period = "F10"
-	if substance == "B":
-		substance = "Bromoform"
-		period = "F92"
-	if substance == "D":
-		substance = "Dirbromomethane"
-		period = "F548"
-	num_traj = sys.argv[4]
+	num_traj = sys.argv[3]
+	variable = sys.argv[4]
+	test = sys.argv[5]
 
-
+	if num_traj == "TTP":
+		name2 = "_17km"
+	else:
+		name2 = "_every%straj" % num_traj
+	if test == "y":
+		name3 = "_test"
+	else:
+		name3 = ""
+	name = name + '_' + variable + name2 + name3
 
 	#Set name of input parent directory, title, and name of file
-	input_parentdir = "/projects/NS1004K/sarahgj/Flexpart/%s/%s_%s/"%(cruice,substance,period)
-	title = "%s, %s"%(substance, cruice)
-	if num_traj == "TTP":
-		name = "%s17km_%s"%(substance,cruice)
-	else:
-		name = "%s_%s"%(substance,cruice)
-
-
-
-	#Specify number of files to read
-	if cruice == "M91" and  substance == "Methyliodide":
-		N_releases = 102
-
-	if cruice == "ASTRA" and substance == "Methyliodide":
-		N_releases = 85
-
-	if cruice == "M91" and substance == "Bromoform":
-		N_releases = 24
-
-	if cruice == "ASTRA" and substance == "Bromoform":
-		N_releases = 81
-
-	if cruice == "M91" and substance == "Dirbromomethane":
-		N_releases = 0
-
-	if cruice == "ASTRA" and substance == "Dirbromomethane":
-		N_releases = 0
-
-
+	input_parentdir = "/projects/NS1004K/sarahgj/Flexpart/%s/%s_%s/"%(cruise,substance,period)
+	title = "%s, %s"%(substance, cruise)
 
 	#Make the map
 	m,fig = make_map(title) #Title not included????
 	print "map done"
 
-	#Read input and plot on map
-	for i in range(1,N_releases+1):
-		print "Working on file nr. %i" %i
-		p = read_input(input_parentdir + "outputs-%i/" % i)
-		print i,"opened"
-		lc = plot_on_map(p, m, fig, num_traj, variable)
+
+	if test == "y":
+		#Read input and plot on map
+		for i in range(1,2):
+			print "Working on file nr. %i" %i
+			p = read_input(input_parentdir + "outputs-%i/" % i)
+			print i,"opened"
+			lc = plot_on_map(p, m, fig, num_traj, variable)
+	else:
+		#Read input and plot on map
+		for i in range(1,N_releases+1):
+			print "Working on file nr. %i" %i
+			p = read_input(input_parentdir + "outputs-%i/" % i)
+			print i,"opened"
+			lc = plot_on_map(p, m, fig, num_traj, variable)
 
 		
 	#Make colorbar 
 	if variable == "h":
 		axcb = fig.colorbar(lc, ticks=[0,2000,4000,6000,8000,10000,12000,14000,16000,18000,20000])
-		axcb.set_label('Height [m]', fontsize=20)
+		axcb.set_label('Height [m]')
 	if variable == "m":
 		axcb = fig.colorbar(lc)
-		axcb.set_label('mass [?]', fontsize=20)
-	axcb.ax.tick_params(labelsize=18)
+		axcb.set_label('mass [?]')
+	axcb.ax.tick_params()
 
+	plt.show(fig)
 
 	#Saving the figure
 	#save = raw_input("Would you like to save the figure (enter or no)?")
 	#if save is not "no":
 	destination_folder = "/projects/NS1004K/sarahgj/Figures/Flexpart/"
 	outputplot = destination_folder + name
-	plt.savefig('%s.pdf'%(outputplot))
-	plt.savefig('%s.png'%(outputplot))
-	plt.savefig('%s.eps'%(outputplot))
+	plt.savefig('{}.pdf'.format(outputplot))
+	plt.savefig('{}.pgf'.format(outputplot))
 
-	#plt.show()
+	print "Figures saved"
+
 
 
 	
