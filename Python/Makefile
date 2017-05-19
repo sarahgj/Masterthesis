@@ -13,6 +13,17 @@
 # $^ is all dependencies
 # $@ is the target
 
+.PHONY: colorlines
+colorlines:
+	python colorlines_Flex.py ASTRA M TTP h
+
+
+.PHONY: ASTRA_M
+ASTRA_M:
+	python fluxes_plots.py ASTRA M
+	python entrainment_plot.py ASTRA M
+	python released_entrained_correlation ASTRA M
+
 
 .PHONY: all
  # By default, makefile operates on files so if there will be a file called all it will try to use it instead of a command. To avoid this use .PHONY before attributing.

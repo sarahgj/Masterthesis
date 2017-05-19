@@ -114,7 +114,7 @@ def main():
 	
 
 	#Import options in parameters
-	print """usage: python %prog ASTRA/M91 h(height)/m(mass) M(Methyliodide)/B(Bromoform)/D(Dibromomethane) number of every # trajectory/TTP"""
+	print """usage: python %prog ASTRA/M91 M(Methyliodide)/B(Bromoform)/D(Dibromomethane) number of every # trajectory/TTP  h(height)/m(mass)"""
 	import sys
 	cruice = sys.argv[1]
 	variable = sys.argv[2]
