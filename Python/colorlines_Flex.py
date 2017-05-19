@@ -85,20 +85,14 @@ def main():
 		#p.lons = p.lons
 		x,y = m(p.lons[:,:], p.lats[:,:])   # Transforms the data into the map's coordinates
 		Ntraj = len(x[1,:]) #j, number of trajectiories
+		Ntime = len(x[:,1]) #number of timestamps
 		if variable == "h":
 			var = p.heights
 		if variable == "m":
 			var = p.xmass
-		#---------------------------------------------------------------------------------------------------------#		
-		if not num_traj  == "TTP":
-			for j in range(0,Ntraj-1,int(num_traj)):
-       				points = np.array([x[:,j], y[:,j]]).T.reshape(-1, 1, 2)
-			       	segments = np.concatenate([points[:-1], points[1:]], axis=1)
-		       		lc = LineCollection(segments, cmap=plt.get_cmap('jet'), norm=plt.Normalize(np.min(var),np.max(var)))
-	       			lc.set_array(var[:,j])
-       				lc.set_linewidth(1)						      			
-				plt.gca().add_collection(lc)
-		else:
+		#---------------------------------------------------------------------------------------------------------#	
+	
+		if num_traj  == "TTP":
 			for j in range(0,Ntraj-1):
 				if np.max(var[:,j]) >= 17000:
 					points = np.array([x[:,j], y[:,j]]).T.reshape(-1, 1, 2)
@@ -107,7 +101,39 @@ def main():
 					lc.set_array(var[:,j])
 					lc.set_linewidth(1)						      			
 					plt.gca().add_collection(lc)
-		return lc
+					return lc
+
+		elif num_traj == "avTTP":
+			n = 0
+			lons = np.zeros(Ntime)
+			lats = np.zeros(Ntime)
+			variable = np.zeros(Ntime)
+			for j in range(0,Ntraj-1):
+				if np.max(var[:,j]) >= 17000:
+					lons = lons + x[:,j]
+					lats = lats + y[:,j]
+					variable = variable + var[:,j]
+					n = n + 1
+			lons = lons/n
+			lats = lats/n
+			variable = variable/n
+       	       		points = np.array([lons, lats]).T.reshape(-1, 1, 2)
+       	       		segments = np.concatenate([points[:-1], points[1:]], axis=1)
+       	       		lc = LineCollection(segments, cmap=plt.get_cmap('jet'), norm=plt.Normalize(np.min(variable),np.max(variable)))
+	       		lc.set_array(variable)
+			lc.set_linewidth(1)						      			
+			plt.gca().add_collection(lc)
+			return lc
+
+		else:
+			for j in range(0,Ntraj-1,int(num_traj)):
+       				points = np.array([x[:,j], y[:,j]]).T.reshape(-1, 1, 2)
+			       	segments = np.concatenate([points[:-1], points[1:]], axis=1)
+		       		lc = LineCollection(segments, cmap=plt.get_cmap('jet'), norm=plt.Normalize(np.min(var),np.max(var)))
+	       			lc.set_array(var[:,j])
+       				lc.set_linewidth(1)						      			
+				plt.gca().add_collection(lc)
+			return lc
 
 
 	#=============================================================================================================#
@@ -125,6 +151,8 @@ def main():
 
 	if num_traj == "TTP":
 		name2 = "_17km"
+	elif num_traj == "avTTP":
+		name2 = "_av17km"
 	else:
 		name2 = "_every%straj" % num_traj
 	if test == "y":
@@ -144,7 +172,7 @@ def main():
 
 	if test == "y":
 		#Read input and plot on map
-		for i in range(1,2):
+		for i in range(1,N_releases+1,10):
 			print "Working on file nr. %i" %i
 			p = read_input(input_parentdir + "outputs-%i/" % i)
 			print i,"opened"
