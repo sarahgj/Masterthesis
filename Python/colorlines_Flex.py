@@ -1,13 +1,6 @@
-#!/usr/bin/env python
-#
-# (C) Copyright 2016 UIO.
-#
-# This software is licensed under the terms of the Apache Licence Version 2.0
-# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0. 
+##########################################################################################################
+# This program plots the particle trajectories from Flexpart on a map with a colored third variable.
 # 
-# Creation: October 2016 - Anne Fouilloux - University of Oslo
-# Modified: Sarah
-
 # REMEMBER!!!!!!!   
 # >> module use --append /projects/NS1000K/modulefiles
 # >> module load python/anaconda
@@ -77,12 +70,9 @@ def main():
 		m.drawmapboundary(fill_color='white')
 		plt.title(title)
 		return m, fig
-
-	#=============================================================================================================#
 	
-	def plot_on_map(p, m, fig, num_traj, variable):
+	def plot_on_map(p, m, fig, variable, who, everyN):
 		##Does the plotting, each file at a time.##
-		#p.lons = p.lons
 		x,y = m(p.lons[:,:], p.lats[:,:])   # Transforms the data into the map's coordinates
 		Ntraj = len(x[1,:]) #j, number of trajectiories
 		Ntime = len(x[:,1]) #number of timestamps
@@ -90,10 +80,11 @@ def main():
 			var = p.heights
 		if variable == "m":
 			var = p.xmass
+		lc = False
 		#---------------------------------------------------------------------------------------------------------#	
 	
-		if num_traj  == "TTP":
-			for j in range(0,Ntraj-1):
+		if who  == "TTP":
+			for j in range(0,Ntraj-1,int(everyN)):
 				if np.max(var[:,j]) >= 17000:
 					points = np.array([x[:,j], y[:,j]]).T.reshape(-1, 1, 2)
 					segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -101,9 +92,8 @@ def main():
 					lc.set_array(var[:,j])
 					lc.set_linewidth(1)						      			
 					plt.gca().add_collection(lc)
-					return lc
 
-		elif num_traj == "avTTP":
+		elif who == "avTTP":
 			n = 0
 			lons = np.zeros(Ntime)
 			lats = np.zeros(Ntime)
@@ -123,17 +113,16 @@ def main():
 	       		lc.set_array(variable)
 			lc.set_linewidth(1)						      			
 			plt.gca().add_collection(lc)
-			return lc
 
 		else:
-			for j in range(0,Ntraj-1,int(num_traj)):
+			for j in range(0,Ntraj-1,int(everyN)):
        				points = np.array([x[:,j], y[:,j]]).T.reshape(-1, 1, 2)
 			       	segments = np.concatenate([points[:-1], points[1:]], axis=1)
 		       		lc = LineCollection(segments, cmap=plt.get_cmap('jet'), norm=plt.Normalize(np.min(var),np.max(var)))
 	       			lc.set_array(var[:,j])
        				lc.set_linewidth(1)						      			
 				plt.gca().add_collection(lc)
-			return lc
+		return lc
 
 
 	#=============================================================================================================#
@@ -143,15 +132,16 @@ def main():
 
 	#Import options in parameters
 	substance, period, cruise, name, N_releases = sp.specify()
-	print """number of every # trajectory/TTP  h(height)/m(mass) test:y/n"""
+	print """variable:h(height)/m(mass) who:all/TTP/avTTP everyN:(number of trajectories) test:y/n"""
 	import sys
-	num_traj = sys.argv[3]
-	variable = sys.argv[4]
+	variable = sys.argv[3]
+	who = sys.argv[4]
+	everyN = sys.argv[5]
 	test = sys.argv[5]
 
-	if num_traj == "TTP":
+	if who == "TTP":
 		name2 = "_17km"
-	elif num_traj == "avTTP":
+	elif who == "avTTP":
 		name2 = "_av17km"
 	else:
 		name2 = "_every%straj" % num_traj
@@ -169,31 +159,46 @@ def main():
 	m,fig = make_map(title) #Title not included????
 	print "map done"
 
+	colorbar = False
 
 	if test == "y":
 		#Read input and plot on map
-		for i in range(1,N_releases+1,10):
+		for i in range(1,N_releases+1,25):
 			print "Working on file nr. %i" %i
 			p = read_input(input_parentdir + "outputs-%i/" % i)
 			print i,"opened"
-			lc = plot_on_map(p, m, fig, num_traj, variable)
+			lc = plot_on_map(p, m, fig, variable, who, everyN)
+			if lc != False and colorbar == False:
+				#Make colorbar 
+				if variable == "h":
+					axcb = fig.colorbar(lc, ticks=[0,2000,4000,6000,8000,10000,12000,14000,16000,18000,20000])
+					axcb.set_label('Height [m]')
+				elif variable == "m":
+				       	axcb = fig.colorbar(lc)
+				       	axcb.set_label('mass [?]')
+				axcb.ax.tick_params()
+				colorbar = True
+				print 'made colorbar'
+
+
 	else:
 		#Read input and plot on map
 		for i in range(1,N_releases+1):
 			print "Working on file nr. %i" %i
 			p = read_input(input_parentdir + "outputs-%i/" % i)
 			print i,"opened"
-			lc = plot_on_map(p, m, fig, num_traj, variable)
-
-		
-	#Make colorbar 
-	if variable == "h":
-		axcb = fig.colorbar(lc, ticks=[0,2000,4000,6000,8000,10000,12000,14000,16000,18000,20000])
-		axcb.set_label('Height [m]')
-	if variable == "m":
-		axcb = fig.colorbar(lc)
-		axcb.set_label('mass [?]')
-	axcb.ax.tick_params()
+			lc = plot_on_map(p, m, fig, variable, who, everyN)
+			if lc != False and colorbar == False:
+				#Make colorbar 
+				if variable == "h":
+					axcb = fig.colorbar(lc, ticks=[0,2000,4000,6000,8000,10000,12000,14000,16000,18000,20000])
+					axcb.set_label('Height [m]')
+				elif variable == "m":
+				       	axcb = fig.colorbar(lc)
+				       	axcb.set_label('mass [?]')
+				axcb.ax.tick_params()
+				colorbar = True
+				print 'made colorbar'
 
 	plt.show(fig)
 
