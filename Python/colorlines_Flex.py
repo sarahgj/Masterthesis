@@ -137,14 +137,14 @@ def main():
 	variable = sys.argv[3]
 	who = sys.argv[4]
 	everyN = sys.argv[5]
-	test = sys.argv[5]
+	test = sys.argv[6]
 
 	if who == "TTP":
 		name2 = "_17km"
 	elif who == "avTTP":
 		name2 = "_av17km"
 	else:
-		name2 = "_every%straj" % num_traj
+		name2 = "_every%straj" % everyN
 	if test == "y":
 		name3 = "_test"
 	else:
@@ -163,7 +163,7 @@ def main():
 
 	if test == "y":
 		#Read input and plot on map
-		for i in range(1,N_releases+1,25):
+		for i in range(1,N_releases+1,40):
 			print "Working on file nr. %i" %i
 			p = read_input(input_parentdir + "outputs-%i/" % i)
 			print i,"opened"
@@ -206,11 +206,15 @@ def main():
 	#save = raw_input("Would you like to save the figure (enter or no)?")
 	#if save is not "no":
 	destination_folder = "/projects/NS1004K/sarahgj/Figures/Flexpart/"
+	#if test == 'y':
+	#	destination_folder = destination_folder + 'Tests/'
 	outputplot = destination_folder + name
-	plt.savefig('{}.pdf'.format(outputplot))
-	plt.savefig('{}.pgf'.format(outputplot))
+	#plt.savefig('{}.eps'.format(outputplot))
+	#plt.savefig('{}.pdf'.format(outputplot))
+	plt.savefig('%s.png' % outputplot)
+	plt.savefig('%s.pdf' % outputplot)
 
-	print "Figures saved"
+	print "Figures saved as %s" % outputplot
 
 
 
