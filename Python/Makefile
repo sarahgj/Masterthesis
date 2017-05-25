@@ -15,7 +15,7 @@
 
 .PHONY: colorlines
 colorlines:
-	python colorlines_Flex.py ASTRA M TTP h
+	python colorlines_Flex.py ASTRA M TTP h n
 
 
 .PHONY: ASTRA_M
