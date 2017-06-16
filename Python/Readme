@@ -1,0 +1,38 @@
+colorlines_Flex.py: 
+Tracks the particles on a map, and uses color to indicate height or mass.
+
+cruisetracks.py:
+Plots the cruicetrack on a map, and uses color to indicate different variables.
+
+dship.py:
+Has the two modules: read_M91 and read_ASTRA to read in data from the dship.
+
+entrainedTTP_Flex.py:
+Calculates the amount of particles entrained at 17 km height.
+
+entrainment_plot.py:
+Plots the amount that is entraied and the percentrage that is entrained, and the amount that is released. 
+
+entrainment_plot_extra.py:
+Same as above, but also calculates mean, max, min etc. etrainment for table.
+
+FlexParticle.py:
+Program that reads the Flexpart output files.
+
+fluxes_plot.py:
+Program that plots the calculated fluxes of the VSLS.
+
+latex_plots.py:
+Has the module: newfig and subplot that both adjust the figures so that the text is the right size for a latex document.
+
+lifetimeprofile_plot.py:
+Plots the lifetime of the VSLS with height as used in Flexpart.
+
+released_entrained_correlation.py:
+Plots this correletion for the VSLS from Flexpart output.
+
+specify.py:
+Includes the module: Specify that reads from the command line: cruice and substance, and gives out names etc. 
+
+tripletsaxis_plot.py:
+same as entrainment_plot.py but with three y-axis.
